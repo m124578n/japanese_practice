@@ -19,6 +19,8 @@ def new_user():
 @bp.route('/moji/<userid>', methods=['GET', 'POST'])
 def user_index(userid):
     user = User.query.filter_by(id=userid).first()
+    if not user:
+        return redirect(url_for('new_user'))
     moji_c = Moji(user.now_moji_type)
     moji_type = moji_c.all_type
     now_type = moji_c.now_type
@@ -38,7 +40,7 @@ def user_index(userid):
         correct_answer = record.moji_spell
         correct_answer_data = record.moji_data
         if answer == correct_answer:
-            message = '答對'
+            message = f'答對，{correct_answer_data} 就是 {correct_answer}'
         else:
             message = f'答錯，{correct_answer_data} 正確答案為 {correct_answer}'
         
