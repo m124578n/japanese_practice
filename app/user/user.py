@@ -32,7 +32,9 @@ def user_index(userid):
     
     if request.method == 'POST':
         answer = request.values.get('spell', '')
-        record = Record.query.filter_by(user_id=userid).order_by(Record.id.desc()).first()
+        record = Record.query.filter_by(user_id=user.id).order_by(Record.id.desc()).first()
+        if not record:
+            return redirect(url_for('user.user_index', userid=user.id))
         correct_answer = record.moji_spell
         correct_answer_data = record.moji_data
         if answer == correct_answer:
