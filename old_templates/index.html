@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{moji.moji}}</h1>
+<br>
+<form method="POST" action="{{url_for('index')}}">
+    <input type="text" value="" name="spell" placeholder="請輸入羅馬拼音">
+    <button type="submit">確認</button>
+    <input type="button" onclick="next_moji()" value="下一個">
+</form>
+
+<br>
+
+<select name="moji_list" id="moji_list">
+    <option selected value="{{now_type.type}}">{{now_type.name}}</option>
+    {% for type in moji_type %}
+        <option value="{{type.type}}">{{type.name}}</option>
+    {% endfor %}
+</select>
+
+<script>
+    function next_moji() {
+        window.location.href = '/'
+    }
+
+    document.getElementById("moji_list").addEventListener("change", function(){
+        var selected_value = this.value
+        data = {
+            'status' : 'change',
+            'type' : selected_value
+        }
+        fetch("/change", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.text())
+            .then(data => {
+                window.location.href = '/'
+            })
+            .catch(error =>{
+                window.location.href = '/'
+            })
+    })
+</script>
+<br>
+
+{% if message %}
+{{message}}
+{% endif %}
+{% endblock content %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+Hello {{name}} !
+</br>
+
+{% if args %}
+    other args {{args}}
+    </br>
+{% endif %}
+
+{% if firstname %}
+    firstname : {{firstname}}
+    </br>
+    lastname : {{lastname}}
+    </br>
+{% endif %}
+
+<form method="POST" action="{{url_for('test_index', name=name)}}">
+    <input type="text" class="form-control" name="firstname" placeholder="First name">
+    <input type="text" class="form-control" name="lastname" placeholder="Last name">
+    <button type="submit" class="btn btn-primary"> check </button>
+</form>
+
+{% endblock content %}

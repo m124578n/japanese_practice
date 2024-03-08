@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{moji.moji}}</h1>
+<h1>{{record.moji_data}}</h1>
 <br>
-<form method="POST" action="{{url_for('index')}}">
-    <input type="text" value="" name="spell" placeholder="請輸入羅馬拼音">
+<form method="POST" action="{{url_for('user.user_index', userid=userid)}}">
+    <input type="text" value="" id="spell" name="spell" placeholder="請輸入羅馬拼音">
     <button type="submit">確認</button>
-    <input type="button" onclick="next_moji()" value="下一個">
 </form>
 
 <br>
@@ -19,8 +18,10 @@
 </select>
 
 <script>
-    function next_moji() {
-        window.location.href = '/'
+    const input_element = document.getElementById("spell")
+
+    window.onload = function() {
+        input_element.focus();
     }
 
     document.getElementById("moji_list").addEventListener("change", function(){
@@ -28,7 +29,7 @@
         data = {
             'type' : selected_value
         }
-        fetch("/change", {
+        fetch("/moji/change/" + {{userid}}, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -37,10 +38,10 @@
         })
             .then(response => response.text())
             .then(data => {
-                window.location.href = '/'
+                window.location.href = '/moji/' + {{userid}}
             })
             .catch(error =>{
-                window.location.href = '/'
+                window.location.href = '/moji/' + {{userid}}
             })
     })
 </script>
