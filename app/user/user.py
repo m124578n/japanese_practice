@@ -20,7 +20,7 @@ def new_user():
 def user_index(userid):
     user = User.query.filter_by(id=userid).first()
     if not user:
-        return redirect(url_for('new_user'))
+        return redirect(url_for('user.new_user'))
     moji_c = Moji(user.now_moji_type)
     moji_type = moji_c.all_type
     now_type = moji_c.now_type
