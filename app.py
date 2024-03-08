@@ -315,8 +315,3 @@ def change():
     moji_t = data.get('type', 'hiragana')
     moji_c.change_type(moji_t)
     return 'OK'
-
-
-
-if __name__ == '__main__':
-    app.run()
