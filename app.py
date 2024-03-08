@@ -300,10 +300,11 @@ def index():
         moji = moji_c.get_moji(change=False)
         if not moji:
             return redirect(url_for('index'))
-        if answer == moji['spell']:
+        correct_answer = moji['spell']
+        if answer == correct_answer:
             message = '答對'
         else:
-            message = f'答錯，正確答案為 {moji['spell']}'
+            message = f'答錯，正確答案為 {correct_answer}'
         
         return render_template('index.html', **locals())
 
