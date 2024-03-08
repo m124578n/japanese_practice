@@ -9,7 +9,7 @@ bp = Blueprint('user', __name__)
 
 @bp.route('/', methods=['GET', 'POST'])
 def new_user():
-    user = User(now_moji_type='hiragana')
+    user = User(now_moji_type='hiragana', active=False)
     db.session.add(user)
     db.session.commit()    
     return redirect(url_for('user.user_index', userid=user.id))
@@ -19,8 +19,15 @@ def new_user():
 @bp.route('/moji/<userid>', methods=['GET', 'POST'])
 def user_index(userid):
     user = User.query.filter_by(id=userid).first()
+    user = User.query.filter_by(id=userid).update({'active': True})
+    db.session.commit()
+    user = User.query.filter_by(id=userid).first()
+    
     if not user:
         return redirect(url_for('user.new_user'))
+    if not user.active:
+        return redirect(url_for('user.new_user'))
+    
     moji_c = Moji(user.now_moji_type)
     moji_type = moji_c.all_type
     now_type = moji_c.now_type
