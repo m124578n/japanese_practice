@@ -34,7 +34,6 @@ def new_practice():
 @bp.route('/practice/<userid>', methods=['GET', 'POST'])
 def practice(userid):
     user = User.query.filter_by(id=userid).first()
-    print(user.records)
     if not user:
         return redirect(url_for('user.index'))
     
