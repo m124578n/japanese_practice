@@ -1,22 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{record.moji_data}}</h1>
-<br>
-<form method="POST" action="{{url_for('user.practice', userid=userid)}}">
-    <input type="text" value="" id="spell" name="spell" placeholder="請輸入羅馬拼音">
-    <button type="submit">確認</button>
-</form>
+<div class="practice">
+    <h1>{{moji.moji}}</h1>
+    <form method="POST" action="{{url_for('user.practice', userid=userid)}}">
+        <input type="text" value="" id="spell" name="spell" placeholder="請輸入羅馬拼音">
+        <button type="submit">確認</button>
+    </form>
 
-<br>
 
-<select name="moji_list" id="moji_list">
-    <option selected value="{{now_type.type}}">{{now_type.name}}</option>
-    {% for type in moji_type %}
-        <option value="{{type.type}}">{{type.name}}</option>
-    {% endfor %}
-</select>
+    <select name="moji_list" id="moji_list">
+        <option selected value="{{now_type.type}}">{{now_type.name}}</option>
+        {% for type in moji_type %}
+            <option value="{{type.type}}">{{type.name}}</option>
+        {% endfor %}
+    </select>
 
+    <div class="return_message">
+        {% if message %}
+            {{message}}
+        {% endif %}
+    </div>
+
+    <input type="button" value="返回" onclick="window.location.href='/'">
+
+    <div class="records" >
+        <table>
+            <thead>
+                <td>編號</td>
+                <td>日文</td>
+                <td>答案</td>
+                <td>回答</td>
+                <td>正確</td>
+            </thead>
+            <tbody id="records">
+            </tbody>
+        </table>
+    </div>
+</div>
 <script>
     const input_element = document.getElementById("spell")
 
@@ -44,14 +65,53 @@
             window.location.href = '/practice/' + data['user']
         })
     })
+
+    document.addEventListener('DOMContentLoaded', function(){
+        fetch("/practice/" + "{{userid}}" + "/records/" , {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            records = document.getElementById("records")
+            data.records.forEach(record => {
+                newRow = document.createElement('tr');
+                var cell1 = document.createElement('td');
+                cell1.textContent = record['count'];
+                newRow.appendChild(cell1);
+
+                var cell2 = document.createElement('td');
+                cell2.textContent = record['moji_data'];
+                newRow.appendChild(cell2);
+
+                var cell3 = document.createElement('td');
+                cell3.textContent = record['moji_spell'];
+                newRow.appendChild(cell3);
+
+                var cell4 = document.createElement('td');
+                cell4.textContent = record['answer'];
+                newRow.appendChild(cell4);
+
+                var cell5 = document.createElement('td');
+                if (record['is_correct']){
+                    cell5.textContent = "O";
+                }
+                else{
+                    cell5.textContent = "X";
+                }
+                
+                newRow.appendChild(cell5);
+
+                records.appendChild(newRow);
+            });
+            console.log(data)
+        })
+        .catch(error =>{
+            console.log(error)
+        })
+    })
 </script>
-<br>
-
-{% if message %}
-    {{message}}
-{% endif %}
-
-<br>
-<input type="button" value="返回" onclick="window.location.href='/'">
 
 {% endblock content %}

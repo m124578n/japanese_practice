@@ -34,38 +34,75 @@ def new_practice():
 @bp.route('/practice/<userid>', methods=['GET', 'POST'])
 def practice(userid):
     user = User.query.filter_by(id=userid).first()
-    
+    print(user.records)
     if not user:
         return redirect(url_for('user.index'))
     
-    moji_c = Moji(user.now_moji_type)
+    moji_c = Moji(user)
     moji_type = moji_c.all_type
     now_type = moji_c.now_type
     
     if request.method == 'GET':
         moji = moji_c.get_moji(change=True)
-        record = Record(moji_data=moji['moji'] , moji_spell=moji['spell'], user_id=user.id)
+        record = Record(
+            moji_data=moji['moji'], 
+            moji_spell=moji['spell'], 
+            user_id=userid
+            )
         db.session.add(record)
         db.session.commit()
         return render_template('practice/index.html', **locals())
     
     if request.method == 'POST':
         answer = request.values.get('spell', '')
-        record = Record.query.filter_by(user_id=user.id).order_by(Record.id.desc()).first()
-        if not record:
-            return redirect(url_for('user.user_index', userid=user.id))
-        correct_answer = record.moji_spell
-        correct_answer_data = record.moji_data
-        if answer == correct_answer:
+        # record = Record.query.filter_by(user_id=userid).order_by(Record.id.desc()).first()
+        moji_c.moji['moji']
+        moji_c.moji['spell']
+        # if not record:
+        #     return redirect(url_for('user.user_index', userid=user.id))
+        correct_answer = moji_c.moji['spell']
+        correct_answer_data = moji_c.moji['moji']
+        is_correct = answer == correct_answer
+        if is_correct:
             message = f'答對，{correct_answer_data} 就是 {correct_answer}'
         else:
             message = f'答錯，{correct_answer_data} 正確答案為 {correct_answer}'
         
+        record_id = moji_c.moji['id']
+        record = Record.query.filter_by(id=record_id).update({"answer": answer, "is_correct": is_correct})
+        db.session.commit()
         moji = moji_c.get_moji(change=True)
-        record = Record(moji_data=moji['moji'] , moji_spell=moji['spell'], user_id=user.id)
+        record = Record(
+            moji_data=moji['moji'], 
+            moji_spell=moji['spell'], 
+            user_id=userid
+            )
         db.session.add(record)
         db.session.commit()
         return render_template('practice/index.html', **locals())
+
+
+@bp.route('/practice/<userid>/records/', methods=['GET'])
+def get_all_practice_records(userid):
+    records = Record.query.filter_by(user_id=userid).order_by(Record.id.desc()).all()
+    all_results = []
+    count = len(records)
+    for record in records:
+        if count == len(records):
+            count -= 1
+            continue
+        temp = {}
+        temp['count'] = count
+        temp['moji_data'] = record.moji_data
+        temp['moji_spell'] = record.moji_spell
+        temp['answer'] = record.answer
+        temp['is_correct'] = record.is_correct
+        all_results.append(temp)
+        count -= 1
+
+    data = {"records" : all_results}
+    response = make_response(jsonify(data), 200)
+    return response
 
 
 @bp.route('/moji/change/<userid>', methods=['POST'])
