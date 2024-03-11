@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="timer">
+    <h1>計時賽</h1>
+    <div>
+        暱稱 : <input type="text" id="name" value="">
+    </div>
+    <div>
+        日文類型 : <select name="moji_list" id="moji_list" style="width: 150px;">
+            <option selected value="">請選擇</option>
+            {% for type in moji_type %}
+                <option value="{{type.type}}">{{type.name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        時　　間 : <select name="time" id="time" style="width: 150px;">
+            <option selected value="">請選擇</option>
+                <option value="60">一分鐘</option>
+                <option value="120">兩分鐘</option>
+        </select>
+    </div>
+    <div>
+        <input type="button" value="開始" onclick="start()">
+    </div>
+    <div>
+        <input type="button" value="返回" onclick="window.location.href='/'">
+    </div>
+</div>
+<script>
+    function start() {
+        name = document.getElementById('name').value
+        moji_type = document.getElementById('moji_list').value
+        time = document.getElementById('time').value
+
+        if (name === ''){
+            alert("請輸入暱稱")
+            return
+        }
+        if (moji_type === ''){
+            alert("請選擇日文類型")
+            return
+        }
+        if (time === ''){
+            alert("請選擇時間")
+            return
+        }
+
+        data = {
+            "name" : name,
+            "moji_type" : moji_type,
+            "time" : time
+        }
+        fetch("/timer/", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.href = '/timer/' + data['user']
+        })
+        .catch(error =>{
+            window.location.href = '/'
+        })
+    }
+</script>
+{% endblock content %}

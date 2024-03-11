@@ -12,7 +12,7 @@ from app.JP_Moji import Moji
 from app.dbs import db
 import json
 
-bp = Blueprint('user', __name__)
+bp = Blueprint('practice', __name__)
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -35,7 +35,7 @@ def new_practice():
 def practice(userid):
     user = User.query.filter_by(id=userid).first()
     if not user:
-        return redirect(url_for('user.index'))
+        return redirect(url_for('practice.index'))
     
     moji_c = Moji(user)
     moji_type = moji_c.all_type
@@ -54,11 +54,6 @@ def practice(userid):
     
     if request.method == 'POST':
         answer = request.values.get('spell', '')
-        # record = Record.query.filter_by(user_id=userid).order_by(Record.id.desc()).first()
-        moji_c.moji['moji']
-        moji_c.moji['spell']
-        # if not record:
-        #     return redirect(url_for('user.user_index', userid=user.id))
         correct_answer = moji_c.moji['spell']
         correct_answer_data = moji_c.moji['moji']
         is_correct = answer == correct_answer
@@ -117,6 +112,3 @@ def change(userid):
     return response
 
 
-@bp.route('/timer/', methods=['POST'])
-def new_timer():
-    return 

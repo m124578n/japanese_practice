@@ -2,7 +2,10 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from .dbs import db
-from .user import user
+from .practice import practice
+from .timer import timer
+from .app import app as ap
+
 
 migrate = Migrate()
 
@@ -17,7 +20,9 @@ def create_app():
     
     migrate.init_app(app, db)
 
-    app.register_blueprint(user.bp)
+    app.register_blueprint(practice.bp)
+    app.register_blueprint(timer.bp)
+    app.register_blueprint(ap.bp)
 
     with app.app_context():
         db.create_all()

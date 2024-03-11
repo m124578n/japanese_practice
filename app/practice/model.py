@@ -16,4 +16,3 @@ class Record(db.Model):
     is_correct = sa.Column(sa.Boolean, nullable=True)
     user_id = sa.Column(sa.Integer, sa.ForeignKey('user.id'), nullable=False)
 
-    

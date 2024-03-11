@@ -2,25 +2,18 @@
 
 {% block content %}
 <div class="practice">
-    <h1>{{moji.moji}}</h1>
-    
+    <div>
+        <h1 id="moji">{{moji.moji}}</h1>
+    </div>
     <!-- <audio controls>
         <source src="/speak" type="audio/mp3">
         Your browser does not support the audio element.
     </audio> -->
-
-    <form method="POST" action="{{url_for('practice.practice', userid=userid)}}">
+    <div id="countdown"></div>
+    <div>
         <input type="text" value="" id="spell" name="spell" placeholder="請輸入羅馬拼音">
-        <button type="submit">確認</button>
-    </form>
-
-
-    <select name="moji_list" id="moji_list">
-        <option selected value="{{now_type.type}}">{{now_type.name}}</option>
-        {% for type in moji_type %}
-            <option value="{{type.type}}">{{type.name}}</option>
-        {% endfor %}
-    </select>
+        <input type="button" value="確認" onclick="next_moji()">
+    </div>
 
     <div class="return_message">
         {% if message %}
@@ -51,12 +44,25 @@
         input_element.focus();
     }
 
-    document.getElementById("moji_list").addEventListener("change", function(){
-        var selected_value = this.value
-        data = {
-            'type' : selected_value
+    document.addEventListener('DOMContentLoaded', function(){
+        get_records()
+    })
+
+
+    input_element.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            next_moji();
+            get_records();
         }
-        fetch("/moji/change/" + {{userid}}, {
+    });
+
+
+    function next_moji() {
+        spell = document.getElementById('spell').value
+        data = {
+            "spell" : spell
+        }
+        fetch("/timer/" + "{{userid}}", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -65,15 +71,24 @@
         })
         .then(response => response.json())
         .then(data => {
-            window.location.href = '/practice/' + data['user']
+            moji = document.getElementById("moji")
+            moji.innerText = data['moji']
+            input_element.value = "";
+            input_element.focus();
         })
         .catch(error =>{
-            window.location.href = '/practice/' + data['user']
+            console.log(error)
         })
-    })
+    }
 
-    document.addEventListener('DOMContentLoaded', function(){
-        fetch("/practice/" + "{{userid}}" + "/records/" , {
+    function clean_table_datas() {
+        records = document.getElementById("records")
+        records.innerHTML  = ''
+    }
+
+    function get_records() {
+        clean_table_datas()
+        fetch("/timer/" + "{{userid}}" + "/records/" , {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -116,7 +131,38 @@
         .catch(error =>{
             console.log(error)
         })
-    })
+    }
+
+
+    // TODO 倒數計時要黨F5 重新整理
+    document.addEventListener('DOMContentLoaded', function() {
+        var countdownElement = document.getElementById('countdown');
+        var secondsLeft = 60;
+
+        function updateCountdown() {
+            countdownElement.textContent = '倒數計時 : ' + secondsLeft;
+        }
+
+        function countdown() {
+            if (secondsLeft > 0) {
+                updateCountdown();
+                secondsLeft--;
+                setTimeout(countdown, 1000); 
+            } else {
+                console.log("jump")
+            }
+        }
+
+        countdown();
+    });
+
+    document.addEventListener('keydown', function(event) {
+            // console.log('Keycode:', event.keyCode);
+            if (event.keyCode === 116 ) {
+                event.preventDefault();
+                console.log('F5 Pressed!');
+            }
+        });
 </script>
 
 {% endblock content %}
