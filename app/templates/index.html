@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Japanese Practice</h1>
+<div class="btn">
+    <input type="button" value="Practice" onclick="to_practice()">
+    <input type="button" value="Timer" onclick="to_timer()">
+    <input type="button" value="About" onclick="to_about()">
+</div>
+
+<script>
+    function to_practice() {
+        data = {}
+        fetch("/practice/", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.href = '/practice/' + data['user']
+        })
+        .catch(error => {
+            window.location.href = '/'
+        })
+    }
+
+    function to_timer() {
+        window.location.href = '/timer/'
+    }
+
+    function to_about() {
+        window.location.href = '/about/'
+    }
+</script>
+
+{% endblock content %}

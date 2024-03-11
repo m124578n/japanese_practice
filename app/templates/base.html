@@ -4,12 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock title %}</title>
+    <style>
+        .main {
+            padding-top: 10%;
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+        }
+    
+        .btn {
+            padding-top: 3%;
+            display: flex;
+            flex-direction: column; 
+            width: 100px;
+            gap: 20px;
+        }
+    </style>
 </head>
 <body>
     {% include "navbar.html" %}
-
-    {% block content %}
-    {% endblock content %}
+    <div class="main">
+        {% block content %}
+        {% endblock content %}
+    </div>
 
     {% include "footer.html" %}
 </body>

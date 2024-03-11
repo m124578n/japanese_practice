@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Page Not Found</h1>
+<div id="countdown"></div>
+<a href="/">here</a>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var countdownElement = document.getElementById('countdown');
+        var secondsLeft = 5;
+
+        // 更新倒计时显示
+        function updateCountdown() {
+            countdownElement.textContent = 'Redirecting in ' + secondsLeft + ' seconds... or';
+        }
+
+        // 更新倒计时并重定向到首页
+        function countdown() {
+            if (secondsLeft > 0) {
+                updateCountdown();
+                secondsLeft--;
+                setTimeout(countdown, 1000); // 每秒更新一次
+            } else {
+                window.location.href = "/"; // 重定向到首页
+            }
+        }
+
+        // 启动倒计时
+        countdown();
+    });
+</script>
+{% endblock content %}

@@ -1,4 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import (
+    Blueprint, 
+    render_template, 
+    redirect, 
+    url_for, 
+    request, 
+    make_response,
+    jsonify
+    )
 from .model import User, Record
 from app.JP_Moji import Moji
 from app.dbs import db
@@ -8,25 +16,27 @@ bp = Blueprint('user', __name__)
 
 
 @bp.route('/', methods=['GET', 'POST'])
-def new_user():
-    user = User(now_moji_type='hiragana', active=False)
+def index():
+    return render_template('index.html')
+
+
+@bp.route('/practice/', methods=['POST'])
+def new_practice():
+    user = User(now_moji_type='hiragana')
     db.session.add(user)
-    db.session.commit()    
-    return redirect(url_for('user.user_index', userid=user.id))
-
-
-
-@bp.route('/moji/<userid>', methods=['GET', 'POST'])
-def user_index(userid):
-    user = User.query.filter_by(id=userid).first()
-    user = User.query.filter_by(id=userid).update({'active': True})
     db.session.commit()
+
+    data = {"user" : user.id}
+    response = make_response(jsonify(data), 200)
+    return response
+
+
+@bp.route('/practice/<userid>', methods=['GET', 'POST'])
+def practice(userid):
     user = User.query.filter_by(id=userid).first()
     
     if not user:
-        return redirect(url_for('user.new_user'))
-    if not user.active:
-        return redirect(url_for('user.new_user'))
+        return redirect(url_for('user.index'))
     
     moji_c = Moji(user.now_moji_type)
     moji_type = moji_c.all_type
@@ -37,7 +47,7 @@ def user_index(userid):
         record = Record(moji_data=moji['moji'] , moji_spell=moji['spell'], user_id=user.id)
         db.session.add(record)
         db.session.commit()
-        return render_template('user/index.html', **locals())
+        return render_template('practice/index.html', **locals())
     
     if request.method == 'POST':
         answer = request.values.get('spell', '')
@@ -55,7 +65,7 @@ def user_index(userid):
         record = Record(moji_data=moji['moji'] , moji_spell=moji['spell'], user_id=user.id)
         db.session.add(record)
         db.session.commit()
-        return render_template('user/index.html', **locals())
+        return render_template('practice/index.html', **locals())
 
 
 @bp.route('/moji/change/<userid>', methods=['POST'])
@@ -65,4 +75,12 @@ def change(userid):
     moji_t = data.get('type', 'hiragana')
     user = User.query.filter_by(id=userid).update({'now_moji_type': moji_t})
     db.session.commit()
-    return 'OK'
+
+    data = {'user': userid}
+    response = make_response(jsonify(data), 200)
+    return response
+
+
+@bp.route('/timer/', methods=['POST'])
+def new_timer():
+    return 

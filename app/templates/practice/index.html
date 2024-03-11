@@ -3,7 +3,7 @@
 {% block content %}
 <h1>{{record.moji_data}}</h1>
 <br>
-<form method="POST" action="{{url_for('user.user_index', userid=userid)}}">
+<form method="POST" action="{{url_for('user.practice', userid=userid)}}">
     <input type="text" value="" id="spell" name="spell" placeholder="請輸入羅馬拼音">
     <button type="submit">確認</button>
 </form>
@@ -36,18 +36,22 @@
             },
             body: JSON.stringify(data)
         })
-            .then(response => response.text())
-            .then(data => {
-                window.location.href = '/moji/' + {{userid}}
-            })
-            .catch(error =>{
-                window.location.href = '/moji/' + {{userid}}
-            })
+        .then(response => response.json())
+        .then(data => {
+            window.location.href = '/practice/' + data['user']
+        })
+        .catch(error =>{
+            window.location.href = '/practice/' + data['user']
+        })
     })
 </script>
 <br>
 
 {% if message %}
-{{message}}
+    {{message}}
 {% endif %}
+
+<br>
+<input type="button" value="返回" onclick="window.location.href='/'">
+
 {% endblock content %}
