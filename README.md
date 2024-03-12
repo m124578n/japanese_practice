@@ -10,3 +10,8 @@ Flask-SQLAlchemy
         
 ## deploy fly.io
 部署到fly.io上，後續有考慮使用雲服務     
+
+
+## 日文
+日文前處理是爬蟲，以下網站     
+https://home.gamer.com.tw/creationDetail.php     
