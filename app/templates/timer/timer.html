@@ -44,15 +44,10 @@
         input_element.focus();
     }
 
-    document.addEventListener('DOMContentLoaded', function(){
-        get_records()
-    })
-
 
     input_element.addEventListener('keypress', function(event) {
         if (event.key === 'Enter') {
             next_moji();
-            get_records();
         }
     });
 
@@ -73,6 +68,7 @@
         .then(data => {
             moji = document.getElementById("moji")
             moji.innerText = data['moji']
+            get_records();
             input_element.value = "";
             input_element.focus();
         })
@@ -137,7 +133,7 @@
     // TODO 倒數計時要黨F5 重新整理
     document.addEventListener('DOMContentLoaded', function() {
         var countdownElement = document.getElementById('countdown');
-        var secondsLeft = 60;
+        var secondsLeft = {{user.time}};
 
         function updateCountdown() {
             countdownElement.textContent = '倒數計時 : ' + secondsLeft;
@@ -149,12 +145,30 @@
                 secondsLeft--;
                 setTimeout(countdown, 1000); 
             } else {
-                console.log("jump")
+                complete_timer();
             }
         }
-
         countdown();
     });
+
+
+    function complete_timer() {
+        data = {}
+        fetch("/timer/" + "{{userid}}" + "/over", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.href = '/rank/'
+        })
+        .catch(error =>{
+            console.log(error)
+        })
+    }
 
     document.addEventListener('keydown', function(event) {
             // console.log('Keycode:', event.keyCode);

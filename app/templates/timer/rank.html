@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>排行榜 Rank</h1>
+
+<table>
+    <thead>
+        <td>排名</td>
+        <td>姓名</td>
+        <td>日文種類</td>
+        <td>正確率</td>
+        <td>WPM</td>
+    </thead>
+    <tbody id="ranks">
+    </tbody>
+</table>
+
+<br>
+<input type="button" value="返回" onclick="window.location.href='/'">
+
+
+<script>
+    window.onload = function() {
+            get_ranks();
+        }
+
+    function get_ranks() {
+        fetch("/api/ranks/", {
+            methods: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            ranks = document.getElementById('ranks')
+            data.ranks.forEach(rank => {
+                newRow = document.createElement('tr');
+                var cell1 = document.createElement('td');
+                cell1.textContent = rank['count'];
+                newRow.appendChild(cell1);
+
+                var cell2 = document.createElement('td');
+                cell2.textContent = rank['name'];
+                newRow.appendChild(cell2);
+
+                var cell3 = document.createElement('td');
+                cell3.textContent = rank['moji_type'];
+                newRow.appendChild(cell3);
+
+                var cell4 = document.createElement('td');
+                cell4.textContent = rank['accurary'];
+                newRow.appendChild(cell4);
+
+                var cell5 = document.createElement('td');
+                cell5.textContent = rank['WPM'];
+                newRow.appendChild(cell5);
+
+                ranks.appendChild(newRow);
+            });
+            console.log(data)
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    }
+</script>
+
+{% endblock content %}
