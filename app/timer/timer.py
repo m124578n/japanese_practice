@@ -57,6 +57,7 @@ def timer(userid):
         data = request.data.decode("utf-8")
         data = json.loads(data)
         answer = data.get('spell', '')
+        answer = answer.replace(" ", "").lower()
         correct_answer = moji_c.moji['spell']
         correct_answer_data = moji_c.moji['moji']
         is_correct = answer == correct_answer

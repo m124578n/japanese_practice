@@ -54,6 +54,7 @@ def practice(userid):
     
     if request.method == 'POST':
         answer = request.values.get('spell', '')
+        answer = answer.replace(" ", "").lower()
         correct_answer = moji_c.moji['spell']
         correct_answer_data = moji_c.moji['moji']
         is_correct = answer == correct_answer
