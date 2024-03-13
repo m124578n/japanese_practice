@@ -2,7 +2,7 @@
 
 def trans_list_to_str(list_of_spell):
     '''['o', 'wo'] -> o, wo'''
-    return str(list_of_spell).replace("[", "").replace("]", "").replace("'", "")
+    return str(list_of_spell).replace("[", "").replace("]", "").replace("'", "").replace(" ", "")
 
 
 def trans_str_to_list(str_of_spell):

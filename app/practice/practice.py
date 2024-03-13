@@ -59,6 +59,7 @@ def practice(userid):
         correct_answer = moji_c.moji['spell']
         correct_answer_data = moji_c.moji['moji']
         is_correct = answer in correct_answer
+        print(answer, correct_answer)
         if is_correct:
             message = f'答對，{correct_answer_data} 就是 {correct_answer}'
         else:
