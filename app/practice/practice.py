@@ -10,6 +10,7 @@ from flask import (
 from .model import User, Record
 from app.JP_Moji import Moji
 from app.dbs import db
+from app.utils import trans_list_to_str, clean_the_input_data
 import json
 
 bp = Blueprint('practice', __name__)
@@ -45,7 +46,7 @@ def practice(userid):
         moji = moji_c.get_moji(change=True)
         record = Record(
             moji_data=moji['moji'], 
-            moji_spell=moji['spell'], 
+            moji_spell=trans_list_to_str(moji['spell']), 
             user_id=userid
             )
         db.session.add(record)
@@ -54,10 +55,10 @@ def practice(userid):
     
     if request.method == 'POST':
         answer = request.values.get('spell', '')
-        answer = answer.replace(" ", "").lower()
+        answer = clean_the_input_data(answer)
         correct_answer = moji_c.moji['spell']
         correct_answer_data = moji_c.moji['moji']
-        is_correct = answer == correct_answer
+        is_correct = answer in correct_answer
         if is_correct:
             message = f'答對，{correct_answer_data} 就是 {correct_answer}'
         else:
@@ -69,7 +70,7 @@ def practice(userid):
         moji = moji_c.get_moji(change=True)
         record = Record(
             moji_data=moji['moji'], 
-            moji_spell=moji['spell'], 
+            moji_spell=trans_list_to_str(moji['spell']),
             user_id=userid
             )
         db.session.add(record)

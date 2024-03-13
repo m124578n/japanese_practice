@@ -1,5 +1,6 @@
 from .japanese import moji_type
 import random
+from .utils import trans_str_to_list
 
 
 class Moji:
@@ -13,7 +14,7 @@ class Moji:
             self.moji = {
                 'id' : user.records[-1].id,
                 'moji' : user.records[-1].moji_data,
-                'spell' : user.records[-1].moji_spell,
+                'spell' : trans_str_to_list(user.records[-1].moji_spell),
                 }
         else:
             self.moji = None
@@ -43,7 +44,7 @@ class TimerMoji:
             self.moji = {
                 'id' : user.records[-1].id,
                 'moji' : user.records[-1].moji_data,
-                'spell' : user.records[-1].moji_spell,
+                'spell' : trans_str_to_list(user.records[-1].moji_spell),
                 }
         else:
             self.moji = None

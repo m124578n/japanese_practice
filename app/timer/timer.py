@@ -10,6 +10,7 @@ from flask import (
 from .model import TimerUser, TimerRecord, TimerRank
 from app.JP_Moji import TimerMoji
 from app.dbs import db
+from app.utils import trans_list_to_str, clean_the_input_data, trans_str_to_list
 import json
 
 bp = Blueprint('timer', __name__)
@@ -46,7 +47,7 @@ def timer(userid):
         moji = moji_c.get_moji(change=True)
         record = TimerRecord(
             moji_data=moji['moji'], 
-            moji_spell=moji['spell'], 
+            moji_spell=trans_list_to_str(moji['spell']), 
             timer_user_id=userid
             )
         db.session.add(record)
@@ -57,10 +58,10 @@ def timer(userid):
         data = request.data.decode("utf-8")
         data = json.loads(data)
         answer = data.get('spell', '')
-        answer = answer.replace(" ", "").lower()
+        answer = clean_the_input_data(answer)
         correct_answer = moji_c.moji['spell']
         correct_answer_data = moji_c.moji['moji']
-        is_correct = answer == correct_answer
+        is_correct = answer in correct_answer
         record_id = moji_c.moji['id']
         record = TimerRecord.query.filter_by(id=record_id).update({"answer": answer, "is_correct": is_correct})
         db.session.commit()
@@ -68,7 +69,7 @@ def timer(userid):
         moji = moji_c.get_moji(change=True)
         record = TimerRecord(
             moji_data=moji['moji'], 
-            moji_spell=moji['spell'], 
+            moji_spell=trans_list_to_str(moji['spell']), 
             timer_user_id=userid
             )
         db.session.add(record)
@@ -87,7 +88,7 @@ def get_all_practice_records(userid):
         temp = {}
         temp['count'] = count
         temp['moji_data'] = record.moji_data
-        temp['moji_spell'] = record.moji_spell
+        temp['moji_spell'] = trans_str_to_list(record.moji_spell)
         temp['answer'] = record.answer
         temp['is_correct'] = record.is_correct
         all_results.append(temp)
