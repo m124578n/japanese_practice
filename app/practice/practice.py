@@ -59,11 +59,10 @@ def practice(userid):
         correct_answer = moji_c.moji['spell']
         correct_answer_data = moji_c.moji['moji']
         is_correct = answer in correct_answer
-        print(answer, correct_answer)
         if is_correct:
-            message = f'答對，{correct_answer_data} 就是 {correct_answer}'
+            message = f'答對，{correct_answer_data} 就是 {trans_list_to_str(correct_answer)}'
         else:
-            message = f'答錯，{correct_answer_data} 正確答案為 {correct_answer}'
+            message = f'答錯，{correct_answer_data} 正確答案為 {trans_list_to_str(correct_answer)}'
         
         record_id = moji_c.moji['id']
         record = Record.query.filter_by(id=record_id).update({"answer": answer, "is_correct": is_correct})

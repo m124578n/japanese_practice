@@ -102,7 +102,7 @@ def get_all_practice_records(userid):
 @bp.route('/timer/<userid>/over/', methods=['POST'])
 def create_rank(userid):
     user = TimerUser.query.filter_by(id=userid).first()
-    records = user.records[1:]
+    records = user.records[:1]
     time_t = user.time
     amount = len(records)
     count_correct = 0
