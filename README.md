@@ -14,4 +14,4 @@ Flask-SQLAlchemy
 
 ## 日文
 日文前處理是爬蟲，以下網站     
-https://home.gamer.com.tw/creationDetail.php     
+https://home.gamer.com.tw/creationDetail.php?sn=3667405 
